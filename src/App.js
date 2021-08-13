@@ -3,7 +3,10 @@ import './App.css';
 function App() {
   return (
     <div className="App">
-        <h1>YouBox</h1>
+        <Switch>
+            <Route path='/login' render={props => <Login {...props}  />}/>
+            <Route path='/' render={props => <SubSurvey {...props}  />}/>
+        </Switch>
     </div>
   );
 }
