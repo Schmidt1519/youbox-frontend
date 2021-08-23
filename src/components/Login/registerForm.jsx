@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import {withRouter, Redirect} from 'react-router-dom';
-import useForm from './useForm';
+import useForm from "../UseForm/useForm"
 import Form from 'react-bootstrap/Form'
 import { Button, Container } from "react-bootstrap";
 
 const RegisterForm = (props) => {
+    console.log(props);
     const {values, handleChange, handleSubmit} = useForm(createUser);
     const [redirect,setRedirect] = useState(false);
 
@@ -12,7 +13,7 @@ const RegisterForm = (props) => {
         console.log(values.phone);
         let string = values.phone;
         let number = parseInt(string);
-        const addUser = {...values, ['phone']: number, ['role']: "customer"}
+        const addUser = {...values, ['phone']: number, ['role']: "employee", ['image_Id']: null }
         console.log(addUser);
         props.registerUser(addUser);
         setRedirect(true)
@@ -23,29 +24,7 @@ const RegisterForm = (props) => {
             {!redirect ?
             <Container>
                 <br/>
-            <Form onSubmit={handleSubmit}>
-            <label>Email:
-                <br/>
-                    <input
-                        type='text'
-                        name='email'
-                        onChange={handleChange}
-                        value={values.email}
-                    />
-                </label>
-                <br/>
-                <br/>
-            <label>Username:
-            <br/>
-                    <input
-                        type='text'
-                        name='username'
-                        onChange={handleChange}
-                        value={values.username}
-                    />
-                </label>
-                <br/>
-                <br/>
+                <Form onSubmit={handleSubmit}>
                 <label>First Name:
                 <br/>
                     <input
@@ -55,19 +34,17 @@ const RegisterForm = (props) => {
                         value={values.first_name}
                     />
                 </label>
-                <br/>
-                <br/>
+                <br/><br/>
                 <label>Last Name:
                 <br/>
                     <input
                         type='text'
                         name='last_name'
                         onChange={handleChange}
-                        value={values.definition}
+                        value={values.last_name}
                     />
                 </label>
-                <br/>
-                <br/>
+                <br/><br/>
                 <label>Phone:
                 <br/>
                     <input
@@ -77,9 +54,18 @@ const RegisterForm = (props) => {
                         value={values.phone}
                     />
                 </label>
+                <br/><br/>
+                <label>Email:
                 <br/>
-                <br/>
-                <label>Street Address:
+                    <input
+                        type='text'
+                        name='email'
+                        onChange={handleChange}
+                        value={values.email}
+                    />
+                </label>
+                <br/><br/>
+                <label>Address:
                 <br/>
                     <input
                         type='text'
@@ -88,8 +74,7 @@ const RegisterForm = (props) => {
                         value={values.street_Address}
                     />
                 </label>
-                <br/>
-                <br/>
+                <br/><br/>
                 <label>City:
                 <br/>
                     <input
@@ -123,6 +108,16 @@ const RegisterForm = (props) => {
                 </label>
                 <br/>
                 <br/>
+                <label>Username:
+                    <br/>
+                    <input
+                        type='text'
+                        name='username'
+                        onChange={handleChange}
+                        value={values.username}
+                    />
+                </label>
+                <br/><br/>
                 <label>Password:
                 <br/>
                     <input
@@ -132,8 +127,7 @@ const RegisterForm = (props) => {
                         value={values.password}
                     />
                 </label>
-                <br/>
-                <br/>
+                <br/><br/>
                 <button type='submit'>Register</button>
             </Form>
             </Container>

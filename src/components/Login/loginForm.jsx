@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {withRouter, Redirect} from 'react-router-dom';
-import useForm from './useForm';
+import useForm from "../UseForm/useForm"
 import Form from 'react-bootstrap/Form';
 
 const LoginForm = (props) => {
