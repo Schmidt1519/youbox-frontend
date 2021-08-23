@@ -6,6 +6,8 @@ import React, {useEffect, useState} from 'react';
 import jwtDecode from "jwt-decode";
 import SignIn from './components/Login/signInPage';
 import NavbarOne from './components/NavBar/navbar';
+import SurveyPage from './components/Survey/surveyPage';
+import survey from '../public/images/surveyimg.png'
 
 
 function App() {
@@ -14,9 +16,11 @@ function App() {
   const [token, setToken] = useState([]);
   const [loggedIn, setLoggedIn] = useState(false);
   const [regUsers, setRegUsers] = useState([]);
+  const [allSubscriptions, setAllSubscriptions] = useState([]);
 
   useEffect(() => {
     getToken();
+    getAllSubscriptions();
   },[]);
 
   let getToken = () => {
@@ -71,13 +75,26 @@ function App() {
     }
   }
 
+  let getAllSubscriptions = async () => {
+    try{
+        let response = await axios.get('http://127.0.0.1:8000/sub/');
+        console.log(response.data);
+        setAllSubscriptions(response.data);
+        console.log(allSubscriptions);
+    }
+    catch(err) {
+        console.log(err);
+    }
+}
+
   if(loggedIn===false){
     return (
     <div className="App">
        <NavbarOne logoutUser={logoutUser} user={user} loggedIn={loggedIn} />
         <Switch>
+        <Route path='/survey' render={props => <SurveyPage {...props} allSubscriptions={allSubscriptions} user={user} loggedIn={loggedIn} />}/>
         <Route path='/login' render={props => <SignIn {...props} user={user} loggedIn={loggedIn} registerUser={registerUser} loginCurrentUser={loginCurrentUser} />}/>
-        <Route path='/' render={props => <Subscriptions {...props} user={user} loggedIn={loggedIn}  />}/>
+        <Route path='/' render={props => <Subscriptions {...props} allSubscriptions={allSubscriptions}  user={user} loggedIn={loggedIn}  />}/>
         </Switch>
     </div>
    );
@@ -87,8 +104,9 @@ function App() {
       <div className="App">
          <NavbarOne logoutUser={logoutUser} user={user} loggedIn={loggedIn} />
           <Switch>
+          <Route path={'/survey'} render={props => <SurveyPage {...props} allSubscriptions={allSubscriptions}  user={user} loggedIn={loggedIn} />}/>
               <Route path='/login' render={props => <SignIn {...props} user={user} loggedIn={loggedIn} registerUser={registerUser} loginCurrentUser={loginCurrentUser} />}/>
-              <Route path='/' render={props => <Subscriptions {...props}  />}/>
+              <Route path='/' render={props => <Subscriptions {...props} allSubscriptions={allSubscriptions}  user={user} loggedIn={loggedIn} />}/>
           </Switch>
       </div>
      );
