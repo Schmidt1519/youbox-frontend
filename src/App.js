@@ -7,7 +7,7 @@ import jwtDecode from "jwt-decode";
 import SignIn from './components/Login/signInPage';
 import NavbarOne from './components/NavBar/navbar';
 import SurveyPage from './components/Survey/surveyPage';
-import survey from '../public/images/surveyimg.png'
+
 
 
 function App() {
