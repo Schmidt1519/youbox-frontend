@@ -13,11 +13,8 @@ function SurveyPage(props){
             <br/>
             <center>
             <Container>
-                <div  class="card text-primary">
-                    <h1 class="card-body pricing-card-title ">We'll suggest a subscription based on your answers</h1>
-                </div>
             <br/>
-            <SurveyForm allSubscriptions={props.allSubscriptions} />
+            <SurveyForm user={props.user} filteredSubscriptions={props.filteredSubscriptions} filterSubscriptions={props.filterSubscriptions} allSubscriptions={props.allSubscriptions} />
             </Container>
             </center>
         </div>

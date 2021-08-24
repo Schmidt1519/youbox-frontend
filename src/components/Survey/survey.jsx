@@ -1,44 +1,123 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import useForm from "../UseForm/useForm"
 import { Col,Button, Form } from 'react-bootstrap';
 import { option } from 'react-bootstrap';
+import axios from 'axios';
 
 function SurveyForm (props) {
     const {values, handleChange, handleSubmit} = useForm(UserAnswers);
     const [redirect,setRedirect] = useState(false);
+    const [selectedSub,setSelectedSub] = useState([]);
+    const [allClothes,setAllClothes] = useState([]);
+    const [deliveryDate,setDeliveryDate] = useState([]);
+    const [submitted,setSubmitted] = useState(false);
+    const [clothing,setClothing] = useState([]);
+    const [allImages,setAllImages] = useState([]);
+
+    useEffect(() => {
+        getAllClothes();
+        getDeliveryDate();
+        getAllimages();
+      },[]);
+
+    let getAllClothes = async () => {
+        try{
+            let response = await axios.get('http://127.0.0.1:8000/clothes/');
+            console.log(response.data);
+            setAllClothes(response.data);
+            console.log(allClothes);
+        }
+        catch(err) {
+            console.log(err);
+        }
+    }
+
+    let getAllimages = async () => {
+        try{
+            let response = await axios.get('http://127.0.0.1:8000/image/');
+            console.log(response.data);
+            setAllImages(response.data);
+            console.log(allImages);
+        }
+        catch(err) {
+            console.log(err);
+        }
+    }
+
+    let getDeliveryDate = (separator='-') =>{
+        let newDate = new Date()
+        let date = newDate.getDate() + 3;
+        let month = newDate.getMonth() + 1;
+        let year = newDate.getFullYear();
+
+        setDeliveryDate(`${year}${separator}${month<10?`0${month}`:`${month}`}${separator}${date}`)
+    }
 
     async function UserAnswers() {
-        const login = {...values}
-        console.log(login,props)
+        const survAnswers = {...values}
+        let selected = props.allSubscriptions.filter(sub => sub.id == survAnswers.subId)
+        setSelectedSub(selected)
+        let style = allClothes.filter(clothes => clothes.style == survAnswers.style)
+        let brand = style.filter(clothes => clothes.brand == survAnswers.brand)
+        let size = brand.filter(clothes => clothes.size == survAnswers.size)
+        let color = size.filter(clothes => clothes.color == survAnswers.color)
+        let material = color.filter(clothes => clothes.material == survAnswers.material)
+        let pattern = material.filter(clothes => clothes.pattern == survAnswers.pattern)
+        let clothingItems = [];
+        setClothing(pattern)
+        for(let i=0; i<pattern.length;i++){
+            clothingItems.push(pattern[i].id)
+        }
+
+        const order = {
+            "user_Id": props.user.id,
+            "subscription_Id": selected[0].id,
+            "clothing_Items": clothingItems,
+            "total": selected[0].price,
+            "est_Delivery": deliveryDate
+        }
+        
+        setSubmitted(true) 
+    
+        console.log(survAnswers,props,selected[0],pattern,clothingItems, order,deliveryDate)
     }
+
+    if(submitted===false){
 
     return(
         <div>
+            <div  class="card text-primary">
+                    <h1 class="card-body pricing-card-title ">We'll suggest a subscription based on your answers</h1>
+                </div><br/>
             <div>
             <Form onSubmit={handleSubmit}>
-                <div class='row col-12 '>
+            <div class='row col-12 '>
+                <center>
                 <div class='col-6'>
                 <div class='col-8 card text-primary'>
-                    <label for="delivery_Freq">Choose delivery frequency</label>
+                    <label for="subId">Choose delivery frequency</label>
                         <div>
                         
                             <select class='col-6'
-                            name="delivery_Freq" 
+                            name="subId" 
                             onChange={handleChange} 
-                            value={values.delivery_Freq} 
+                            value={values.subId} 
                             >
                                 <option >Choose</option>
-                                <option value={values.delivery_Freq}>Monthly</option>
-                                <option value={values.delivery_Freq}>Bi-Weekly</option>
-                                <option value={values.delivery_Freq}>Weekly</option> 
+                                <option value='1'>Monthly</option>
+                                <option value='2'>Bi-Weekly</option>
+                                <option value='3'>Weekly</option> 
                             </select>
                         </div>
                         </div>
+                        </div>
+                        </center>
                  </div><br/>
-                 <div class='col-6'>
-                 <div class='col-8 card text-primary'>
-                    <label for='style'>Choose your style</label>
-                        <div>
+                 <div class='row col-12 '>
+                    <div class='col-6'>
+                        <div class='col-8 card text-primary'>
+                            <label for='style'>Choose your style</label>
+                            <div>
                        
                             <select class='col-6'
                             name='style' 
@@ -50,15 +129,15 @@ function SurveyForm (props) {
                                 <option value={values.style}>Business Casual</option>
                                 <option value={values.style}>Casual</option>
                             </select>
+                            </div>
                         </div>
-                        </div>
-                 </div>
-                 </div><br/>
-                 <div class='row col-12 '>
+                    </div>
+                 <br/>
+                 
                     <div class='col-6'>
-                    <div class='col-8 card text-primary'>
-                    <label for='brand'>Choose a Brand</label>
-                        <div>
+                        <div class='col-8 card text-primary'>
+                        <label for='brand'>Choose a Brand</label>
+                            <div>
                        
                             <select class='col-6'
                             name='brand' 
@@ -70,12 +149,14 @@ function SurveyForm (props) {
                                 <option value={values.brand}>Ralph Lauren</option>
                                 <option value={values.brand}>Champion</option>
                             </select>
+                            </div>
                         </div>
-                        </div>
-                 </div><br/>
-                 <div class='col-6'>
-                 <div class='col-8 card text-primary'>
-                    <label for='brand'>What is your size?</label>
+                    </div>
+                    </div><br/>
+                 <div class='row col-12 '>
+                    <div class='col-6'>
+                    <div class='col-8 card text-primary'>
+                        <label for='brand'>What is your size?</label>
                         <div>
                         
                             <select class='col-6'
@@ -89,12 +170,12 @@ function SurveyForm (props) {
                                 <option value={values.size}>Small</option>
                             </select>
                         </div>
-                        </div>
-                        </div>
-                 </div><br/>
-                 <div class='row '>
-                 <div class='col-4'>
-                 <div class='col-12 card text-primary'>
+                    </div>
+                </div>
+                 <br/>
+                 
+                 <div class='col-6'>
+                    <div class='col-8 card text-primary'>
                     <label for='color'>Choose a color</label>
                         <div>
                         
@@ -108,14 +189,16 @@ function SurveyForm (props) {
                                 <option value={values.color}>Red</option>
                                 <option value={values.color}>Blue</option>
                             </select>
-                            </div>
                         </div>
+                    </div>
+                 </div>
                  </div>
                  <br/>
-                 <div class='col-4'>
-                 <div class='col-12 card text-primary'>
-                    <label for='material'>Choose your material</label>
-                        <div>
+                 <div class='row '>
+                    <div class='col-6'>
+                        <div class='col-8 card text-primary'>
+                    <       label for='material'>Choose your material</label>
+                        <       div>
                             <select class='col-6'
                             name='material' 
                             onChange={handleChange} 
@@ -126,12 +209,12 @@ function SurveyForm (props) {
                                 <option value={values.material }>Nylon</option>
                                 <option value={values.material }>Cotton</option>
                             </select>
+                                </div>
                         </div>
-                        </div>
-                 </div>
+                    </div>
                  <br/>
-                 <div class='col-4'>
-                 <div class='col-12 card text-primary'>
+                 <div class='col-6'>
+                 <div class='col-8 card  text-primary'>
                     <label for='pattern'>Choose your pattern</label>
                         <div>
                             <select class='col-6'
@@ -155,6 +238,69 @@ function SurveyForm (props) {
           </div>
         </div>
     )
+}
+else{
+    console.log(clothing)
+
+    let clothes = clothing.map((sub)=>{
+        let string='../images/'
+        let imgName=string.concat(sub.type)
+        let strPath = '.jpg'
+        let path = imgName.concat(strPath)
+        return  <div class="col-3 card free mb-4 shadow-sm">
+        <div class="card-header text-primary">
+        <img src={path} class='image'  width="150" height="150"/>
+            <h4 class="my-0 font-weight-normal heading ">{sub.brand} {sub.type}</h4>
+        </div>
+        <div class="card-body">
+            <h6 class="card-title pricing-card-title ">{sub.style} <small class="text-muted"> Style</small></h6>
+            <ul class="list-unstyled mt-3 mb-4">
+                <li>Pattern: {sub.pattern}</li>
+                <li>Size: {sub.size}</li>
+                <li>Color: {sub.color}</li>
+            </ul>
+        </div>
+    </div>
+    
+    })
+
+    return(
+        <div  class="container">
+            <div  class="card text-primary">
+                <h3 class="card-body pricing-card-title ">{props.user.first_name}, based on your answers we suggest the {selectedSub[0].name} package</h3>
+            </div><br/>
+            <div class="row mb-3 text-center ">
+                <div class="col-3 card free mb-4 shadow-sm">
+                    <div class="card-header text-primary">
+                        <h4 class="my-0 font-weight-normal heading ">{selectedSub[0].name}</h4>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title ">${selectedSub[0].price} <small class="text-muted">/ mo</small></h1>
+                            <ul class="list-unstyled mt-3 mb-4">
+                                <li>{selectedSub[0].delivery_Freq} Delivery</li>
+                                <li>Includes {selectedSub[0].number_Items} articles of Clothing</li>
+                                <li>Every third delivery you'll receive an upgrade!</li>
+                                <li>Use upgrades to add an extra article of clothing on your next delivery</li>
+                            </ul>
+                    </div>
+                </div>
+                <div class='col'>
+                    <center>
+                    <div  class="col-4 card text-primary">
+                        <h6 class="card-body pricing-card-title ">We suggest this outfit</h6>
+                    </div></center><br/>
+                    <div class='col'>
+                        <div class=" row card-body text-center ">
+                        
+                        {clothes}
+                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
 }
 
 export default SurveyForm;
