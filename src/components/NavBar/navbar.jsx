@@ -26,6 +26,7 @@ const NavbarOne = (props) => {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="me-auto">
+        <Nav.Link style={{textDecoration: 'none', color: 'white'}} as={Link} to="/profile" >Profile</Nav.Link>
           <Nav.Link style={{textDecoration: 'none', color: 'white'}} as={Link} to="/" onClick={()=>{props.logoutUser(props.user.username)}}>Logout</Nav.Link>
         </Nav>
       </Navbar.Collapse>
@@ -41,6 +42,7 @@ const NavbarOne = (props) => {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="me-auto">
+        <Nav.Link style={{textDecoration: 'none', color: 'white'}} as={Link} to="/profile" >Profile</Nav.Link>
           <Nav.Link style={{textDecoration: 'none', color: 'white'}} as={Link} to="/" onClick={()=>{props.logoutUser(props.user.username)}}>Logout</Nav.Link>
         </Nav>
       </Navbar.Collapse>

@@ -8,24 +8,24 @@ function SurveyForm (props) {
     const {values, handleChange, handleSubmit} = useForm(UserAnswers);
     const [redirect,setRedirect] = useState(false);
     const [selectedSub,setSelectedSub] = useState([]);
-    const [allClothes,setAllClothes] = useState([]);
+    const [businessClothes,setBusinessClothes] = useState([]);
+    const [stlylAns,setStlylAns] = useState([]);
     const [deliveryDate,setDeliveryDate] = useState([]);
     const [submitted,setSubmitted] = useState(false);
     const [clothing,setClothing] = useState([]);
     const [allImages,setAllImages] = useState([]);
 
     useEffect(() => {
-        getAllClothes();
+        getStyleClothes('Business');
         getDeliveryDate();
         getAllimages();
       },[]);
 
-    let getAllClothes = async () => {
+    let getStyleClothes = async (style) => {
         try{
-            let response = await axios.get('http://127.0.0.1:8000/clothes/');
+            let response = await axios.get(`http://127.0.0.1:8000/clothes-filter/${style}/`);
             console.log(response.data);
-            setAllClothes(response.data);
-            console.log(allClothes);
+                setBusinessClothes(response.data) 
         }
         catch(err) {
             console.log(err);
@@ -57,16 +57,38 @@ function SurveyForm (props) {
         const survAnswers = {...values}
         let selected = props.allSubscriptions.filter(sub => sub.id == survAnswers.subId)
         setSelectedSub(selected)
-        let style = allClothes.filter(clothes => clothes.style == survAnswers.style)
-        let brand = style.filter(clothes => clothes.brand == survAnswers.brand)
-        let size = brand.filter(clothes => clothes.size == survAnswers.size)
-        let color = size.filter(clothes => clothes.color == survAnswers.color)
-        let material = color.filter(clothes => clothes.material == survAnswers.material)
-        let pattern = material.filter(clothes => clothes.pattern == survAnswers.pattern)
+        setStlylAns(survAnswers.style)
+        let pattern;
+        
+            let brand = businessClothes.filter(clothes => clothes.brand == survAnswers.brand)
+            let size = brand.filter(clothes => clothes.size == survAnswers.size)
+            let color = size.filter(clothes => clothes.color == survAnswers.color)
+            let material = color.filter(clothes => clothes.material == survAnswers.material)
+            pattern = material.filter(clothes => clothes.pattern == survAnswers.pattern)
+        
+            setClothing(pattern)
+
+        let items = []
+        for(let i =0;i<clothing.length;i++){
+                 const item ={
+                    brand: clothing[i].brand,
+                    color: clothing[i].brand,
+                    id: clothing[i].id,
+                    image_Id: clothing[i].image_Id,
+                    material: clothing[i].material,
+                    pattern: clothing[i].pattern,
+                    size: clothing[i].size,
+                    style: clothing[i].style,
+                    type: stlylAns,
+                    user_Id: clothing[i].user_Id
+                 }
+                items.push(item)
+        }
+
         let clothingItems = [];
-        setClothing(pattern)
-        for(let i=0; i<pattern.length;i++){
-            clothingItems.push(pattern[i].id)
+        
+        for(let i=0; i<items.length;i++){
+            clothingItems.push(items[i].id)
         }
 
         const order = {
@@ -78,7 +100,7 @@ function SurveyForm (props) {
         }
         
         setSubmitted(true) 
-    
+        console.log(pattern,clothingItems)
         console.log(survAnswers,props,selected[0],pattern,clothingItems, order,deliveryDate)
     }
 
@@ -253,7 +275,7 @@ else{
             <h4 class="my-0 font-weight-normal heading ">{sub.brand} {sub.type}</h4>
         </div>
         <div class="card-body">
-            <h6 class="card-title pricing-card-title ">{sub.style} <small class="text-muted"> Style</small></h6>
+            <h6 class="card-title pricing-card-title ">{stlylAns} <small class="text-muted"> Style</small></h6>
             <ul class="list-unstyled mt-3 mb-4">
                 <li>Pattern: {sub.pattern}</li>
                 <li>Size: {sub.size}</li>
@@ -281,7 +303,8 @@ else{
                                 <li>Includes {selectedSub[0].number_Items} articles of Clothing</li>
                                 <li>Every third delivery you'll receive an upgrade!</li>
                                 <li>Use upgrades to add an extra article of clothing on your next delivery</li>
-                            </ul>
+                            </ul><br/>
+                            <button type="button" class="btn btn-lg btn-block btn-outline-primary free">Get {selectedSub[0].name}</button>
                     </div>
                 </div>
                 <div class='col'>

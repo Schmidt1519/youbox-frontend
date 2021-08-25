@@ -7,6 +7,7 @@ import jwtDecode from "jwt-decode";
 import SignIn from './components/Login/signInPage';
 import NavbarOne from './components/NavBar/navbar';
 import SurveyPage from './components/Survey/surveyPage';
+import Profile from './components/Profile/profile';
 
 
 
@@ -117,7 +118,8 @@ let filterSubscriptions = async (id) => {
       <div className="App">
          <NavbarOne logoutUser={logoutUser} user={user} loggedIn={loggedIn} />
           <Switch>
-          <Route path={'/survey'} render={props => <SurveyPage {...props} filteredSubscriptions={filteredSubscriptions} filterSubscriptions={filterSubscriptions} allSubscriptions={allSubscriptions}  user={user} loggedIn={loggedIn} />}/>
+          <Route path='/profile' render={props => <Profile {...props} user={user} />}/>
+          <Route path='/survey' render={props => <SurveyPage {...props} filteredSubscriptions={filteredSubscriptions} filterSubscriptions={filterSubscriptions} allSubscriptions={allSubscriptions}  user={user} loggedIn={loggedIn} />}/>
               <Route path='/login' render={props => <SignIn {...props} user={user} loggedIn={loggedIn} registerUser={registerUser} loginCurrentUser={loginCurrentUser} />}/>
               <Route path='/' render={props => <Subscriptions {...props} allSubscriptions={allSubscriptions}  user={user} loggedIn={loggedIn} />}/>
           </Switch>

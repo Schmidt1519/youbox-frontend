@@ -32,17 +32,24 @@ function Subscriptions(props) {
     
         return(
             <div  class="container">
-                        <br/>
+                         <br/>
                         <div class="row mb-3 text-center ">
                             {Subscriptions}
                         </div>
-                        <div class="row">
-                            <center>
-                            <div>
-                            <Button active ><Link style={{textDecoration:'none', color: 'white'}} to={{pathname: '/survey', query:{}}}>Take survey</Link></Button>
-                            </div><br/><br/>
-                            </center>
+                        <center>
+                        <div class="row col-4 bg text-white ">
+                            <h4 class='hd' >What's your style?</h4>
+                            <div >
+                            <img src={'../images/surveyimg.png'} class='image'  width="250" height="200"/>
+                            </div>
+                            <div class='hd'>
+                            <br/>
+                            <Button active ><Link style={{textDecoration:'none', color: 'white'}} to={{pathname: '/login'}}>Sign Up</Link></Button>
+                            </div>
                         </div>
+                        <br/><br/>
+                        </center>
+                        
                     </div>
         )}
 
@@ -61,9 +68,6 @@ function Subscriptions(props) {
                         <li>Every third delivery you'll receive an upgrade!</li>
                         <li>Use upgrades to add an extra article of clothing on your next delivery</li>
                     </ul>
-                
-                    <button type="button" class="btn btn-lg btn-block btn-outline-primary free">Get {sub.name}</button>
-                   
                 </div>
             </div>
             })
@@ -106,7 +110,6 @@ function Subscriptions(props) {
                             <li>Every third delivery you'll receive an upgrade!</li>
                             <li>Use upgrades to add an extra article of clothing on your next delivery</li>
                         </ul>
-                        <button type="button" class="btn btn-lg btn-block btn-outline-primary free">Get {sub.name}</button>
                     </div>
                 </div>
                 })
